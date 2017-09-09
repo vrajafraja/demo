@@ -33,6 +33,17 @@ define('zonky-average/components/welcome-page', ['exports', 'ember-welcome-page/
     }
   });
 });
+define('zonky-average/controllers/average', ['exports'], function (exports) {
+		'use strict';
+
+		Object.defineProperty(exports, "__esModule", {
+				value: true
+		});
+		exports.default = Ember.Controller.extend({
+				queryParams: ['rating'],
+				rating: null
+		});
+});
 define('zonky-average/helpers/app-version', ['exports', 'zonky-average/config/environment', 'ember-cli-app-version/utils/regexp'], function (exports, _environment, _regexp) {
   'use strict';
 
@@ -245,9 +256,239 @@ define('zonky-average/router', ['exports', 'zonky-average/config/environment'], 
     rootURL: _environment.default.rootURL
   });
 
-  Router.map(function () {});
+  Router.map(function () {
+    this.route('average');
+    this.route('about');
+  });
 
   exports.default = Router;
+});
+define('zonky-average/routes/average', ['exports'], function (exports) {
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+
+	function _asyncToGenerator(fn) {
+		return function () {
+			var gen = fn.apply(this, arguments);
+			return new Promise(function (resolve, reject) {
+				function step(key, arg) {
+					try {
+						var info = gen[key](arg);
+						var value = info.value;
+					} catch (error) {
+						reject(error);
+						return;
+					}
+
+					if (info.done) {
+						resolve(value);
+					} else {
+						return Promise.resolve(value).then(function (value) {
+							step("next", value);
+						}, function (err) {
+							step("throw", err);
+						});
+					}
+				}
+
+				return step("next");
+			});
+		};
+	}
+
+	var RSVP = Ember.RSVP;
+
+	var Promise = RSVP.Promise;
+
+	/**  
+ * returns total amount of loans on marketplace for given rating
+ */
+
+	var getTotalLoansForRating = function () {
+		var _ref = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(rating) {
+			var getTotalLoansPromise, totalLoansForRating, totalLoans;
+			return regeneratorRuntime.wrap(function _callee$(_context) {
+				while (1) {
+					switch (_context.prev = _context.next) {
+						case 0:
+							getTotalLoansPromise = new Promise(function (resolve, reject) {
+								var request = new XMLHttpRequest();
+								var url = 'https://api.zonky.cz/loans/marketplace?fields=amount&rating__eq=' + rating;
+								request.open('GET', url);
+								request.setRequestHeader("X-Size", 1);
+								request.onload = function () {
+									return resolve(request);
+								};
+								request.onerror = function () {
+									return reject(request.statusText);
+								};
+								request.send();
+							});
+							_context.next = 3;
+							return getTotalLoansPromise;
+
+						case 3:
+							totalLoansForRating = _context.sent;
+							totalLoans = totalLoansForRating.getResponseHeader("X-Total");
+							return _context.abrupt('return', totalLoans);
+
+						case 6:
+						case 'end':
+							return _context.stop();
+					}
+				}
+			}, _callee, this);
+		}));
+
+		return function getTotalLoansForRating(_x) {
+			return _ref.apply(this, arguments);
+		};
+	}();
+
+	/**
+ * returns JSON with loan objects on. Total amount of loans is determined by size parameter
+ * e.g. [{"amount":120000.00,"published":true},{"amount":200000.00,"published":true} ... {"amount":85000.00,"published":true}]
+ */
+	function getLoansPageWithRating(rating, size) {
+		return new Promise(function (resolve, reject) {
+			var request = new XMLHttpRequest();
+			var url = 'https://api.zonky.cz/loans/marketplace?fields=amount&rating__eq=' + rating;
+			request.open('GET', url);
+			request.setRequestHeader("X-Size", size);
+			request.onload = function () {
+				return resolve(JSON.parse(request.responseText));
+			};
+			request.onerror = function () {
+				return reject(request.statusText);
+			};
+			request.send();
+		});
+	}
+
+	/**
+ * returns JSON with all loan objects marketplace.
+ */
+
+	var getLoansForSpecifiedRating = function () {
+		var _ref2 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(rating) {
+			var totalLoans, loans;
+			return regeneratorRuntime.wrap(function _callee2$(_context2) {
+				while (1) {
+					switch (_context2.prev = _context2.next) {
+						case 0:
+							totalLoans = getTotalLoansForRating(rating);
+							_context2.next = 3;
+							return getLoansPageWithRating(rating, totalLoans);
+
+						case 3:
+							loans = _context2.sent;
+							return _context2.abrupt('return', loans);
+
+						case 5:
+						case 'end':
+							return _context2.stop();
+					}
+				}
+			}, _callee2, this);
+		}));
+
+		return function getLoansForSpecifiedRating(_x2) {
+			return _ref2.apply(this, arguments);
+		};
+	}();
+
+	/**
+ * returns average loans amount rounded by decimals parameter
+ */
+	function countAverage(loans, decimals) {
+		var totalAmount = 0;
+		if (loans) {
+			loans.forEach(function (loan) {
+				totalAmount += loan.amount;
+			});
+		}
+
+		var average = Number(totalAmount / loans.length);
+		return average.toFixed(decimals);
+	}
+
+	/**
+ * for given rating, sets average loan amount as the average parameter in controller 
+ */
+
+	var setAverage = function () {
+		var _ref3 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3(rating, controller) {
+			var loans, average;
+			return regeneratorRuntime.wrap(function _callee3$(_context3) {
+				while (1) {
+					switch (_context3.prev = _context3.next) {
+						case 0:
+							if (!(rating != null)) {
+								_context3.next = 6;
+								break;
+							}
+
+							_context3.next = 3;
+							return getLoansForSpecifiedRating(rating);
+
+						case 3:
+							loans = _context3.sent;
+							average = Number(countAverage(loans, 0)).toLocaleString();
+
+							controller.set('average', average);
+
+						case 6:
+						case 'end':
+							return _context3.stop();
+					}
+				}
+			}, _callee3, this);
+		}));
+
+		return function setAverage(_x3, _x4) {
+			return _ref3.apply(this, arguments);
+		};
+	}();
+
+	exports.default = Ember.Route.extend({
+		queryParams: {
+			rating: { refreshModel: true }
+		},
+		actions: {
+			queryParamsDidChange: function queryParamsDidChange(changed, all, removed) {
+				if ('rating' in changed) {
+					this.refresh();
+				} else if ('rating' in removed) {
+					this.controllerFor('average').set('average', null);
+				}
+			}
+		},
+		beforeModel: function beforeModel(transition) {
+			var controller = this.controllerFor('average');
+			var rating = transition.queryParams.rating;
+			setAverage(rating, controller);
+		},
+		model: function model() {
+			return RSVP.hash({
+				ratings: [{ "display-name": "A**", "url-param": "AAAAA" }, { "display-name": "A*", "url-param": "AAAA" }, { "display-name": "A++", "url-param": "AAA" }, { "display-name": "A+", "url-param": "AA" }, { "display-name": "A", "url-param": "A" }, { "display-name": "B", "url-param": "B" }, { "display-name": "C", "url-param": "C" }, { "display-name": "D", "url-param": "D" }]
+			});
+		}
+	});
+});
+define('zonky-average/routes/index', ['exports'], function (exports) {
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	exports.default = Ember.Route.extend({
+		beforeModel: function beforeModel() {
+			this.replaceWith('average');
+		}
+	});
 });
 define('zonky-average/services/ajax', ['exports', 'ember-ajax/services/ajax'], function (exports, _ajax) {
   'use strict';
@@ -268,7 +509,23 @@ define("zonky-average/templates/application", ["exports"], function (exports) {
   Object.defineProperty(exports, "__esModule", {
     value: true
   });
-  exports.default = Ember.HTMLBars.template({ "id": "mxHq/ber", "block": "{\"statements\":[[1,[26,[\"welcome-page\"]],false],[0,\"\\n\"],[0,\"\\n\"],[1,[26,[\"outlet\"]],false]],\"locals\":[],\"named\":[],\"yields\":[],\"hasPartials\":false}", "meta": { "moduleName": "zonky-average/templates/application.hbs" } });
+  exports.default = Ember.HTMLBars.template({ "id": "Z0bBc1+d", "block": "{\"symbols\":[],\"statements\":[[6,\"div\"],[9,\"class\",\"main-page-container\"],[7],[0,\"\\n\"],[4,\"link-to\",[\"average\",[25,\"query-params\",null,[[\"rating\"],[\"null\"]]]],null,{\"statements\":[[0,\"\\t\\t\\t\"],[6,\"h1\"],[7],[0,\"Průměrná výše půjček\"],[8],[0,\"\\n\"]],\"parameters\":[]},null],[0,\"\\t\"],[6,\"div\"],[9,\"class\",\"body\"],[7],[0,\"\\n\\t\"],[6,\"div\"],[9,\"class\",\"splitter-bar\"],[7],[0,\"\\n\\t\"],[8],[0,\"\\n\\t\"],[6,\"h2\"],[9,\"class\",\"ratings-title\"],[7],[0,\"Rating:\"],[8],[0,\"\\n\\t\\t\"],[1,[18,\"outlet\"],false],[0,\"\\n\\t\"],[8],[0,\"\\n\"],[8]],\"hasEval\":false}", "meta": { "moduleName": "zonky-average/templates/application.hbs" } });
+});
+define("zonky-average/templates/average", ["exports"], function (exports) {
+  "use strict";
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = Ember.HTMLBars.template({ "id": "q1mXkuUc", "block": "{\"symbols\":[\"rating\"],\"statements\":[[6,\"div\"],[9,\"class\",\"rating-list\"],[7],[0,\"\\n\\t\"],[6,\"div\"],[9,\"class\",\"rating-buttons\"],[7],[0,\"\\n\"],[4,\"each\",[[19,0,[\"model\",\"ratings\"]]],null,{\"statements\":[[4,\"link-to\",[\"average\",[25,\"query-params\",null,[[\"rating\"],[[19,1,[\"url-param\"]]]]]],[[\"class\"],[\"rating-btn\"]],{\"statements\":[[0,\"\\t\\t\\t\\t\"],[1,[19,1,[\"display-name\"]],false],[0,\"\\n\"]],\"parameters\":[]},null]],\"parameters\":[1]},null],[0,\"\\t\\t\"],[8],[0,\"\\n\\t\"],[8],[0,\"\\n\\t\"],[6,\"div\"],[9,\"class\",\"average-amount\"],[7],[0,\"\\n\\t\\t\"],[6,\"p\"],[7],[0,\"\\n\"],[4,\"if\",[[19,0,[\"average\"]]],null,{\"statements\":[[0,\"\\t\\t\\t\"],[1,[18,\"average\"],false],[0,\" Kč\\n\"]],\"parameters\":[]},{\"statements\":[[0,\"\\t\\t\\tZvolte rating\\n\"]],\"parameters\":[]}],[0,\"\\t\\t\"],[8],[0,\"\\n\\t\"],[8],[0,\"\\n\\n\"],[1,[18,\"outlet\"],false]],\"hasEval\":false}", "meta": { "moduleName": "zonky-average/templates/average.hbs" } });
+});
+define("zonky-average/templates/index", ["exports"], function (exports) {
+  "use strict";
+
+  Object.defineProperty(exports, "__esModule", {
+    value: true
+  });
+  exports.default = Ember.HTMLBars.template({ "id": "Gm0ocUei", "block": "{\"symbols\":[],\"statements\":[[1,[18,\"outlet\"],false]],\"hasEval\":false}", "meta": { "moduleName": "zonky-average/templates/index.hbs" } });
 });
 
 
@@ -292,6 +549,6 @@ catch(err) {
 });
 
 if (!runningTests) {
-  require("zonky-average/app")["default"].create({"name":"zonky-average","version":"0.0.0+6706a436"});
+  require("zonky-average/app")["default"].create({"name":"zonky-average","version":"0.0.0+e5aa27ac"});
 }
 //# sourceMappingURL=zonky-average.map

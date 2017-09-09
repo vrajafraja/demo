@@ -1,0 +1,20 @@
+<div class="rating-list">
+	<div class="rating-buttons">
+		{{#each model.ratings as |rating|}}
+			{{#link-to 'average' (query-params rating=rating.url-param) class='rating-btn'}}
+				{{rating.display-name}}
+			{{/link-to}}
+		{{/each}}
+		</div>
+	</div>
+	<div class="average-amount">
+		<p>
+		{{#if average}}
+			{{average}} Kč
+		{{else}}
+			Zvolte rating
+		{{/if}}
+		</p>
+	</div>
+
+{{outlet}}

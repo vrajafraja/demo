@@ -1,0 +1,62 @@
+.ember-application{
+	background-color: rgb(253, 253, 253);
+	font-family: Verdana, Gadget, sans-serif;
+}
+
+.main-page-container{
+    background-color: #efefef;
+    text-align: center;
+    max-width: 750px;
+    margin: auto;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0px 7px 20px 4px rgba(0, 0, 0, 0.19);
+    border-radius: 5px;
+}
+.main-page-container h1{
+	padding-top: 20px;
+	padding-bottom: 10px;
+	-webkit-margin-after: 0;
+}
+.main-page-container h1,a{
+	color: #005e69;
+	text-decoration: none;
+	background-color: #ffffff;
+	margin-bottom: 0px;
+}
+
+.splitter-bar{
+	background-color: #8c8c8c;
+	height: 3px;
+	box-shadow: -2px 2px 7px 0px rgba(0, 0, 0, 0.2), 0px 2px 4px 2px rgba(0, 0, 0, 0.19);
+}
+.ratings-title{
+	font-size: 1em;
+	text-decoration: none;
+	font-weight: normal;
+}
+
+.rating-buttons a{
+	color: #e75637;
+	display: inline-block;
+	padding: 8px 12px;
+	font-size: 12px;
+	line-height: 14px;
+	text-align: center;
+	background-color: #fff;
+	border: 1px solid #e7e7e7;
+	min-width: 50px;
+	max-height: 24px
+    text-decoration: none;
+	border-radius: 5px;
+}
+
+.rating-buttons a.active,
+.rating-buttons a:hover{
+	background-color: #37b1bf;
+	color: white;
+}
+
+.average-amount {
+	font-size: 180%;
+	padding: 3%;
+}
+
