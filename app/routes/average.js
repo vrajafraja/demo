@@ -15,7 +15,6 @@ async function getTotalLoansForRating(rating){
 		request.onerror = () => reject(request.statusText)
 		request.send();  
 	});
-
 	let totalLoansForRating = await getTotalLoansPromise;
 	let totalLoans = totalLoansForRating.getResponseHeader("X-Total");
 	return totalLoans;
@@ -41,7 +40,7 @@ function getLoansPageWithRating(rating, size){
 * returns JSON with all loan objects marketplace.
 */
 async function getLoansForSpecifiedRating(rating){
-		let totalLoans = getTotalLoansForRating(rating);
+		let totalLoans = await getTotalLoansForRating(rating);
 		let loans = await getLoansPageWithRating(rating, totalLoans);
 		return loans;
 	}
@@ -66,8 +65,11 @@ function countAverage(loans, decimals){
 */
 async function setAverage(rating, controller){
 	if (rating != null){
+		let average = 0;
 		let loans = await getLoansForSpecifiedRating(rating);
-		let average = Number(countAverage(loans, 0)).toLocaleString();
+		if (loans.length != 0){
+			average = Number(countAverage(loans, 0)).toLocaleString();
+		}
 		controller.set('average', average);
 	}
 }

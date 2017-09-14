@@ -379,15 +379,19 @@ define('zonky-average/routes/average', ['exports'], function (exports) {
 				while (1) {
 					switch (_context2.prev = _context2.next) {
 						case 0:
-							totalLoans = getTotalLoansForRating(rating);
-							_context2.next = 3;
+							_context2.next = 2;
+							return getTotalLoansForRating(rating);
+
+						case 2:
+							totalLoans = _context2.sent;
+							_context2.next = 5;
 							return getLoansPageWithRating(rating, totalLoans);
 
-						case 3:
+						case 5:
 							loans = _context2.sent;
 							return _context2.abrupt('return', loans);
 
-						case 5:
+						case 7:
 						case 'end':
 							return _context2.stop();
 					}
@@ -421,26 +425,29 @@ define('zonky-average/routes/average', ['exports'], function (exports) {
 
 	var setAverage = function () {
 		var _ref3 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3(rating, controller) {
-			var loans, average;
+			var average, loans;
 			return regeneratorRuntime.wrap(function _callee3$(_context3) {
 				while (1) {
 					switch (_context3.prev = _context3.next) {
 						case 0:
 							if (!(rating != null)) {
-								_context3.next = 6;
+								_context3.next = 7;
 								break;
 							}
 
-							_context3.next = 3;
+							average = 0;
+							_context3.next = 4;
 							return getLoansForSpecifiedRating(rating);
 
-						case 3:
+						case 4:
 							loans = _context3.sent;
-							average = Number(countAverage(loans, 0)).toLocaleString();
 
+							if (loans.length != 0) {
+								average = Number(countAverage(loans, 0)).toLocaleString();
+							}
 							controller.set('average', average);
 
-						case 6:
+						case 7:
 						case 'end':
 							return _context3.stop();
 					}
@@ -517,7 +524,7 @@ define("zonky-average/templates/average", ["exports"], function (exports) {
   Object.defineProperty(exports, "__esModule", {
     value: true
   });
-  exports.default = Ember.HTMLBars.template({ "id": "q1mXkuUc", "block": "{\"symbols\":[\"rating\"],\"statements\":[[6,\"div\"],[9,\"class\",\"rating-list\"],[7],[0,\"\\n\\t\"],[6,\"div\"],[9,\"class\",\"rating-buttons\"],[7],[0,\"\\n\"],[4,\"each\",[[19,0,[\"model\",\"ratings\"]]],null,{\"statements\":[[4,\"link-to\",[\"average\",[25,\"query-params\",null,[[\"rating\"],[[19,1,[\"url-param\"]]]]]],[[\"class\"],[\"rating-btn\"]],{\"statements\":[[0,\"\\t\\t\\t\\t\"],[1,[19,1,[\"display-name\"]],false],[0,\"\\n\"]],\"parameters\":[]},null]],\"parameters\":[1]},null],[0,\"\\t\\t\"],[8],[0,\"\\n\\t\"],[8],[0,\"\\n\\t\"],[6,\"div\"],[9,\"class\",\"average-amount\"],[7],[0,\"\\n\\t\\t\"],[6,\"p\"],[7],[0,\"\\n\"],[4,\"if\",[[19,0,[\"average\"]]],null,{\"statements\":[[0,\"\\t\\t\\t\"],[1,[18,\"average\"],false],[0,\" Kč\\n\"]],\"parameters\":[]},{\"statements\":[[0,\"\\t\\t\\tZvolte rating\\n\"]],\"parameters\":[]}],[0,\"\\t\\t\"],[8],[0,\"\\n\\t\"],[8],[0,\"\\n\\n\"],[1,[18,\"outlet\"],false]],\"hasEval\":false}", "meta": { "moduleName": "zonky-average/templates/average.hbs" } });
+  exports.default = Ember.HTMLBars.template({ "id": "jHTt6AhN", "block": "{\"symbols\":[\"rating\"],\"statements\":[[6,\"div\"],[9,\"class\",\"rating-list\"],[7],[0,\"\\n\\t\"],[6,\"div\"],[9,\"class\",\"rating-buttons\"],[7],[0,\"\\n\"],[4,\"each\",[[19,0,[\"model\",\"ratings\"]]],null,{\"statements\":[[4,\"link-to\",[\"average\",[25,\"query-params\",null,[[\"rating\"],[[19,1,[\"url-param\"]]]]]],[[\"class\"],[\"rating-btn\"]],{\"statements\":[[0,\"\\t\\t\\t\\t\"],[1,[19,1,[\"display-name\"]],false],[0,\"\\n\"]],\"parameters\":[]},null]],\"parameters\":[1]},null],[0,\"\\t\"],[8],[0,\"\\n\"],[8],[0,\"\\n\"],[6,\"div\"],[9,\"class\",\"average-amount\"],[7],[0,\"\\n\\t\"],[6,\"p\"],[7],[0,\"\\n\"],[4,\"if\",[[19,0,[\"average\"]]],null,{\"statements\":[[0,\"\\t\\t\\t\"],[1,[18,\"average\"],false],[0,\" Kč\\n\"]],\"parameters\":[]},{\"statements\":[[0,\"\\t\\t\\tZvolte rating\\n\"]],\"parameters\":[]}],[0,\"\\t\"],[8],[0,\"\\n\"],[8],[0,\"\\n\"],[1,[18,\"outlet\"],false]],\"hasEval\":false}", "meta": { "moduleName": "zonky-average/templates/average.hbs" } });
 });
 define("zonky-average/templates/index", ["exports"], function (exports) {
   "use strict";
