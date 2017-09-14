@@ -41,8 +41,13 @@ function getLoansPageWithRating(rating, size){
 */
 async function getLoansForSpecifiedRating(rating){
 		let totalLoans = await getTotalLoansForRating(rating);
-		let loans = await getLoansPageWithRating(rating, totalLoans);
-		return loans;
+		if (totalLoans != 0){
+			let loans = await getLoansPageWithRating(rating, totalLoans);
+			return loans;
+		}
+		else{
+			return [];
+		}
 	}
 
 /**

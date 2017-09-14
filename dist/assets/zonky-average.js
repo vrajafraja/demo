@@ -384,14 +384,23 @@ define('zonky-average/routes/average', ['exports'], function (exports) {
 
 						case 2:
 							totalLoans = _context2.sent;
-							_context2.next = 5;
+
+							if (!(totalLoans != 0)) {
+								_context2.next = 10;
+								break;
+							}
+
+							_context2.next = 6;
 							return getLoansPageWithRating(rating, totalLoans);
 
-						case 5:
+						case 6:
 							loans = _context2.sent;
 							return _context2.abrupt('return', loans);
 
-						case 7:
+						case 10:
+							return _context2.abrupt('return', []);
+
+						case 11:
 						case 'end':
 							return _context2.stop();
 					}
