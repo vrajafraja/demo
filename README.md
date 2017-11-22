@@ -14,8 +14,8 @@ You will need the following things properly installed on your computer.
 
 ## Installation
 
-* `git clone <repository-url>` this repository
-* `cd zonky-average`
+* `git clone https://github.com/vrajafraja/demo.git` this repository
+* `cd demo`
 * `npm install`
 
 ## Running / Development
